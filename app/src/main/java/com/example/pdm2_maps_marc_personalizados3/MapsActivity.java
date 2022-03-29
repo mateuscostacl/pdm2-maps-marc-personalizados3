@@ -10,12 +10,14 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.pdm2_maps_marc_personalizados3.databinding.ActivityMapsBinding;
@@ -41,7 +43,10 @@ public class MapsActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
-    private LatLng localAtual = new LatLng(-10.195217, -48.332829);;
+    private TextView tvLatlong;
+
+    private LatLng localAtual = new LatLng(-10.195217, -48.332829);
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class MapsActivity extends AppCompatActivity implements
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tvLatlong = findViewById(R.id.tv_lat_long);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -75,12 +82,19 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
 
+        LatLng palmas = new LatLng(-10.184446, -48.333762);
+        mMap.addMarker(new MarkerOptions().position(palmas).title("Praça dos Girassóis em Palmas Tocantins")).showInfoWindow();
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(palmas));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(palmas, 10));
+
 
         // Add a marker in Sydney and move the camera
         LatLng reitoria = new LatLng(-10.195217, -48.332829);
-        mMap.addMarker(new MarkerOptions().position(reitoria).title("IFTO - Reitoria"));
+        mMap.addMarker(new MarkerOptions().position(reitoria).title("IFTO - Reitoria").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_logo_24))).showInfoWindow();
+        ;
         LatLng campus = new LatLng(-10.198658, -48.313259);
-        mMap.addMarker(new MarkerOptions().position(campus).title("IFTO - Campus Palmas"));
+        mMap.addMarker(new MarkerOptions().position(campus).title("IFTO - Campus Palmas").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_logo_24))).showInfoWindow();
+        ;
 
     }
 
@@ -107,15 +121,12 @@ public class MapsActivity extends AppCompatActivity implements
         Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
-        localAtual = new LatLng(-10.182138, -48.331844);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(localAtual));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(localAtual, 16));
         return false;
     }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        tvLatlong.setText("Latitude: " + location.getLatitude() + "\nLongitude: " + location.getLongitude());
     }
 
     @Override
